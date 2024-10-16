@@ -24,8 +24,18 @@ class Db {
   };
 
   updateUser(userData: UserData, id: string) {
-
+    const existedUser = this.users.find((user) => user.id === id);
+    if (existedUser) {
+      Object.assign(existedUser, userData);
+    }
   };
 
-  
+  deleteUser(id: string) {
+    const deletedUserIndex = this.users.findIndex((user) => user.id === id);
+    if (deletedUserIndex !== -1) {
+      this.users.splice(deletedUserIndex, 1);
+    }
+  };
 }
+
+export default new Db();

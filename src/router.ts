@@ -1,35 +1,43 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { Methods, ServerCodes } from './types.js';
-// import * from './controllers.js';
+import {
+  getAllUsers,
+} from './controllers.js';
 
-export const routes: Record<string, unknown> = {
-  'users': '',
-  'user/:id': '',
+const routes: Record<string, () => {}> = {
+  '/users': getAllUsers,
+  // 'user/:id': '',
 };
 
 export class Router {
 
   handleRequest(req: IncomingMessage, res: ServerResponse) {
     const { method, url } = req;
-    console.log(method, url)
+    // console.log(method, url)
     if (!method || !url) {
       return;
     }
-    if (!routes[url]) {
+
+    const normalizedUrl = url.replace('/api', '');
+
+    if (!routes[normalizedUrl]) {
       res.statusCode = ServerCodes.NOT_FOUND;
       res.end(JSON.stringify({ message: 'Route not found' }));
     }
-    // switch (url) {
-    //   case Methods.GET:
-    //     return this.get(url);
-    //   case Methods.POST:
-    //     return this.post(url);
-    // }
+    switch (method) {
+      case Methods.GET:
+        this.get(normalizedUrl, res);
+      // case Methods.POST:
+      //   return this.post(url);
+    }
   };
   
-  // get(url) {
-  //   // return routes();
-  // };
+  get(url: string, res: ServerResponse) {
+
+    const data = routes[url]();
+    res.statusCode = ServerCodes.SUCCESS;
+    res.end(JSON.stringify(data));
+  };
 
   // post(url) {
 
