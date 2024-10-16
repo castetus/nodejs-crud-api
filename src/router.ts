@@ -7,10 +7,11 @@ export const routes: Record<string, unknown> = {
   'user/:id': '',
 };
 
-class Router {
+export class Router {
 
   handleRequest(req: IncomingMessage, res: ServerResponse) {
     const { method, url } = req;
+    console.log(method, url)
     if (!method || !url) {
       return;
     }
@@ -18,29 +19,29 @@ class Router {
       res.statusCode = ServerCodes.NOT_FOUND;
       res.end(JSON.stringify({ message: 'Route not found' }));
     }
-    switch (url) {
-      case Methods.GET:
-        return this.get(url);
-      case Methods.POST:
-        return this.post(url);
-    }
+    // switch (url) {
+    //   case Methods.GET:
+    //     return this.get(url);
+    //   case Methods.POST:
+    //     return this.post(url);
+    // }
   };
   
-  get(url) {
-    return routes();
-  };
+  // get(url) {
+  //   // return routes();
+  // };
 
-  post(url) {
+  // post(url) {
 
-  };
+  // };
 
-  put(req, res) {
+  // put(req, res) {
 
-  };
+  // };
 
-  delete(req, res) {
+  // delete(req, res) {
 
-  };
+  // };
 };
 
-export default new Router();
+// export default new Router();

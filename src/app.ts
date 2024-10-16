@@ -1,13 +1,14 @@
 import { createServer } from 'node:http';
-import Router from './router.js';
+import { Router } from './router.js';
+import { ServerCodes } from './types.js';
+
+const router = new Router();
 
 export const app = createServer((req, res) => {
   try {
-
-    Router.handleRequest(method, url);
-    // router(req, res)
-    // console.log(method, url)
+    router.handleRequest(req, res);
   } catch (error) {
-    
+    res.statusCode = ServerCodes.SERVER_ERROR;
+    res.end('Server error');
   }
 });
