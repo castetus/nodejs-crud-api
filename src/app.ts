@@ -3,9 +3,10 @@ import Router from './router.js';
 
 export const app = createServer((req, res) => {
   try {
-    const { method, url } = req;
+
+    Router.handleRequest(method, url);
     // router(req, res)
-    console.log(method, url)
+    // console.log(method, url)
   } catch (error) {
     
   }
