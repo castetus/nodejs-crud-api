@@ -2,10 +2,12 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 import { Methods, ServerCodes } from './types.js';
 import {
   getAllUsers,
+  getUserById,
+  createNewUser,
 } from './controllers.js';
 
-const routes: Record<string, () => {}> = {
-  '/users': getAllUsers,
+const routes: Record<string, any> = {
+  'users': getAllUsers,
   // 'user/:id': '',
 };
 
@@ -13,43 +15,49 @@ export class Router {
 
   handleRequest(req: IncomingMessage, res: ServerResponse) {
     const { method, url } = req;
-    // console.log(method, url)
+
     if (!method || !url) {
       return;
     }
-
-    const normalizedUrl = url.replace('/api', '');
-
-    if (!routes[normalizedUrl]) {
+    // console.log(url, url.replace('/', '').split('/'))
+    const [ base, endpoint, id ] = url.replace('/', '').split('/');
+    // console.log(base, endpoint, id)
+    if (!routes[endpoint]) {
       res.statusCode = ServerCodes.NOT_FOUND;
-      res.end(JSON.stringify({ message: 'Route not found' }));
+      res.write(JSON.stringify({ message: 'Route not found' }));
     }
     switch (method) {
       case Methods.GET:
-        this.get(normalizedUrl, res);
-      // case Methods.POST:
-      //   return this.post(url);
+        this.get(id, res);
+      case Methods.POST:
+        this.post(req, res);
+      case Methods.PUT:
+        this.put(req, res);
+      case Methods.DELETE:
+        this.delete(endpoint, res);
     }
   };
   
-  get(url: string, res: ServerResponse) {
-
-    const data = routes[url]();
-    res.statusCode = ServerCodes.SUCCESS;
-    res.end(JSON.stringify(data));
+  get(id: string | undefined, res: ServerResponse) {
+    if (id) {
+      // console.log('test', id, typeof id)
+      getUserById(id, res);
+      return;
+    }
+    getAllUsers(res)
   };
 
-  // post(url) {
+  post(req: IncomingMessage, res: ServerResponse) {
 
-  // };
+  };
 
-  // put(req, res) {
+  put(req: IncomingMessage, res: ServerResponse) {
 
-  // };
+  };
 
-  // delete(req, res) {
+  delete(url: string, res: ServerResponse) {
 
-  // };
+  };
 };
 
 // export default new Router();
