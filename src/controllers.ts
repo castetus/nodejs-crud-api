@@ -45,6 +45,18 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
     body += chunk.toString();
   });
   req.on('end', () => {
-    console.log(body);
+    const id = uuidv4();
+    const userData = JSON.parse(body) as UserData;
+    const newUser = {
+      ...userData,
+      id,
+    };
+    db.createNewUser(newUser);
+    res.statusCode = ServerCodes.SUCCESS_CREATE;
+    res.end(JSON.stringify(newUser));
   });
+};
+
+export const updateUser = (req: IncomingMessage, res: ServerResponse, id: string) => {
+  
 };

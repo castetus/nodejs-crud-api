@@ -1,5 +1,4 @@
 import type { IUser } from "./types.js";
-import { v4 as uuidv4 } from 'uuid';
 
 type UserData = Omit<IUser, 'id'>;
 
@@ -11,15 +10,11 @@ class Db {
   };
 
   getSingleUser(id: string): IUser | undefined {
+    console.log(this.users, id)
     return this.users.find((user) => user.id === id);
   };
 
-  createNewUser(userData: UserData) {
-    const id = uuidv4();
-    const newUser = {
-      ...userData,
-      id,
-    };
+  createNewUser(newUser: IUser) {
     this.users.push(newUser);
   };
 

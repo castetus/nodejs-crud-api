@@ -48,7 +48,7 @@ export class Router {
   };
 
   post(req: IncomingMessage, res: ServerResponse) {
-
+    createNewUser(req, res);
   };
 
   put(req: IncomingMessage, res: ServerResponse) {
