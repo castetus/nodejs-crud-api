@@ -9,10 +9,7 @@ import {
 } from './controllers.js';
 import { checkId, checkUser } from "./utils.js";
 
-const routes: Record<string, any> = {
-  'users': getAllUsers,
-  // 'user/:id': '',
-};
+const regex = /^\/api\/users(?:\/([^\/]+))?$/;
 
 export class Router {
 
@@ -23,6 +20,13 @@ export class Router {
       return;
     }
 
+    const isRouteExists = regex.test(url);
+
+    if (!isRouteExists) {
+      res.statusCode = ServerCodes.NOT_FOUND;
+      res.end('Route doesn`t exists');
+    }
+
     const [ base, endpoint, id ] = url.replace('/', '').split('/');
     console.log(base, endpoint, id)
     // if (id) {
@@ -30,21 +34,15 @@ export class Router {
     //   if (!isIdValid) {
     //     res.statusCode = ServerCodes.CLIENT_ERROR;
     //     res.end('User id is not valid id');
-    //     return;
     //   }
 
     //   const userExist = checkUser(id);
     //   if (!userExist) {
     //     res.statusCode = ServerCodes.NOT_FOUND;
     //     res.end('User doesn`t exist');
-    //     return;
     //   }
     // }
 
-    if (!routes[endpoint]) {
-      res.statusCode = ServerCodes.NOT_FOUND;
-      res.write(JSON.stringify({ message: 'Route not found' }));
-    }
     switch (method) {
       case Methods.GET:
         this.get(id, res);
@@ -59,7 +57,6 @@ export class Router {
   
   get(id: string | undefined, res: ServerResponse) {
     if (id) {
-      // console.log('test', id, typeof id)
       getUserById(id, res);
       return;
     }
@@ -78,5 +75,3 @@ export class Router {
     deleteUser(id, res);
   };
 };
-
-// export default new Router();
