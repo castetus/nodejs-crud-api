@@ -28,30 +28,34 @@ export class Router {
     }
 
     const [ base, endpoint, id ] = url.replace('/', '').split('/');
-    console.log(base, endpoint, id)
-    // if (id) {
-    //   const isIdValid = checkId(id);
-    //   if (!isIdValid) {
-    //     res.statusCode = ServerCodes.CLIENT_ERROR;
-    //     res.end('User id is not valid id');
-    //   }
 
-    //   const userExist = checkUser(id);
-    //   if (!userExist) {
-    //     res.statusCode = ServerCodes.NOT_FOUND;
-    //     res.end('User doesn`t exist');
-    //   }
-    // }
+    if (id) {
+      // const isIdValid = checkId(id);
+      // if (!isIdValid) {
+      //   res.statusCode = ServerCodes.CLIENT_ERROR;
+      //   res.end('User id is not valid id');
+      // }
+
+      const userExist = checkUser(id);
+      if (!userExist) {
+        res.statusCode = ServerCodes.NOT_FOUND;
+        res.end('User doesn`t exist');
+      }
+    }
 
     switch (method) {
       case Methods.GET:
         this.get(id, res);
+        break;
       case Methods.POST:
         this.post(req, res);
+        break;
       case Methods.PUT:
         this.put(req, res, id);
+        break;
       case Methods.DELETE:
         this.delete(id, res);
+        break;
     }
   };
   
