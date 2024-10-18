@@ -5,6 +5,7 @@ import {
   getUserById,
   createNewUser,
 } from './controllers.js';
+import { checkId, checkUser } from "./utils.js";
 
 const routes: Record<string, any> = {
   'users': getAllUsers,
@@ -19,9 +20,25 @@ export class Router {
     if (!method || !url) {
       return;
     }
-    // console.log(url, url.replace('/', '').split('/'))
+
     const [ base, endpoint, id ] = url.replace('/', '').split('/');
-    // console.log(base, endpoint, id)
+
+    if (id) {
+      const isIdValid = checkId(id);
+      if (!isIdValid) {
+        res.statusCode = ServerCodes.CLIENT_ERROR;
+        res.end('User id is not valid id');
+        return;
+      }
+
+      const userExist = checkUser(id);
+      if (!userExist) {
+        res.statusCode = ServerCodes.NOT_FOUND;
+        res.end('User doesn`t exist');
+        return;
+      }
+    }
+
     if (!routes[endpoint]) {
       res.statusCode = ServerCodes.NOT_FOUND;
       res.write(JSON.stringify({ message: 'Route not found' }));

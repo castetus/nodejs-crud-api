@@ -2,7 +2,6 @@ import db from "./db.js";
 import { IncomingMessage, ServerResponse } from 'node:http';
 import type { IUser } from "./types.js";
 import { v4 as uuidv4 } from 'uuid';
-import { checkId } from "./utils.js";
 import { ServerCodes } from './types.js';
 
 type UserData = Omit<IUser, 'id'>;
@@ -20,11 +19,6 @@ export const getAllUsers = (res: ServerResponse) => {
 };
 
 export const getUserById = (id: string, res: ServerResponse) => {
-  const isIdValid = checkId(id);
-  if (!isIdValid) {
-    res.statusCode = ServerCodes.CLIENT_ERROR;
-    res.end('User id is not valid id');
-  }
   try {
     const data = db.getSingleUser(id);
     if (data) {
@@ -32,8 +26,6 @@ export const getUserById = (id: string, res: ServerResponse) => {
       res.end(JSON.stringify(data));
       return;
     }
-    res.statusCode = ServerCodes.NOT_FOUND;
-    res.end('User not found');
   } catch (error) {
     console.log(error);
   }
@@ -47,6 +39,12 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
   req.on('end', () => {
     const id = uuidv4();
     const userData = JSON.parse(body) as UserData;
+    const { username, age, hobbies } = userData;
+    if (!username || !age || !hobbies) {
+      res.statusCode = ServerCodes.CLIENT_ERROR;
+      res.end('Invalid data');
+      return;
+    }
     const newUser = {
       ...userData,
       id,
@@ -60,3 +58,13 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
 export const updateUser = (req: IncomingMessage, res: ServerResponse, id: string) => {
   
 };
+
+export const deleteUser = (id: string, res: ServerResponse) => {
+  try {
+    db.deleteUser(id);
+    res.statusCode = ServerCodes.SUCCESS_DELETE;
+    res.end('User successfully deleted');
+  } catch (error) {
+    
+  }
+}
