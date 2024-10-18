@@ -2,8 +2,19 @@ import type { IUser } from "./types.js";
 
 type UserData = Omit<IUser, 'id'>;
 
+const mockUsers = [
+  {
+    id: '13123',
+    username: 'rtyrty',
+    age: 121,
+    hobbies: [
+      'rtytyty'
+    ]
+  }
+]
+
 class Db {
-  users: IUser[] = [];
+  users: IUser[] = mockUsers;
 
   getAllUsers(): IUser[] {
     return this.users;

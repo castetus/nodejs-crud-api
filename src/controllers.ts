@@ -11,7 +11,6 @@ export const getAllUsers = (res: ServerResponse) => {
     const data = db.getAllUsers();
     res.statusCode = ServerCodes.SUCCESS;
     res.write(JSON.stringify(data));
-    res.end();
   } catch (error) {
     console.log(error);
   }
@@ -23,8 +22,7 @@ export const getUserById = (id: string, res: ServerResponse) => {
     const data = db.getSingleUser(id);
     if (data) {
       res.statusCode = ServerCodes.SUCCESS;
-      res.end(JSON.stringify(data));
-      return;
+      res.write(JSON.stringify(data));
     }
   } catch (error) {
     console.log(error);
@@ -40,6 +38,7 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
     const id = uuidv4();
     const userData = JSON.parse(body) as UserData;
     const { username, age, hobbies } = userData;
+    console.log(userData)
     if (!username || !age || !hobbies) {
       res.statusCode = ServerCodes.CLIENT_ERROR;
       res.end('Invalid data');

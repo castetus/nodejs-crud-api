@@ -4,6 +4,8 @@ import {
   getAllUsers,
   getUserById,
   createNewUser,
+  updateUser,
+  deleteUser,
 } from './controllers.js';
 import { checkId, checkUser } from "./utils.js";
 
@@ -22,22 +24,22 @@ export class Router {
     }
 
     const [ base, endpoint, id ] = url.replace('/', '').split('/');
+    console.log(base, endpoint, id)
+    // if (id) {
+    //   const isIdValid = checkId(id);
+    //   if (!isIdValid) {
+    //     res.statusCode = ServerCodes.CLIENT_ERROR;
+    //     res.end('User id is not valid id');
+    //     return;
+    //   }
 
-    if (id) {
-      const isIdValid = checkId(id);
-      if (!isIdValid) {
-        res.statusCode = ServerCodes.CLIENT_ERROR;
-        res.end('User id is not valid id');
-        return;
-      }
-
-      const userExist = checkUser(id);
-      if (!userExist) {
-        res.statusCode = ServerCodes.NOT_FOUND;
-        res.end('User doesn`t exist');
-        return;
-      }
-    }
+    //   const userExist = checkUser(id);
+    //   if (!userExist) {
+    //     res.statusCode = ServerCodes.NOT_FOUND;
+    //     res.end('User doesn`t exist');
+    //     return;
+    //   }
+    // }
 
     if (!routes[endpoint]) {
       res.statusCode = ServerCodes.NOT_FOUND;
@@ -49,9 +51,9 @@ export class Router {
       case Methods.POST:
         this.post(req, res);
       case Methods.PUT:
-        this.put(req, res);
+        this.put(req, res, id);
       case Methods.DELETE:
-        this.delete(endpoint, res);
+        this.delete(id, res);
     }
   };
   
@@ -68,12 +70,12 @@ export class Router {
     createNewUser(req, res);
   };
 
-  put(req: IncomingMessage, res: ServerResponse) {
-
+  put(req: IncomingMessage, res: ServerResponse, id: string) {
+    updateUser(req, res, id);
   };
 
-  delete(url: string, res: ServerResponse) {
-
+  delete(id: string, res: ServerResponse) {
+    deleteUser(id, res);
   };
 };
 
