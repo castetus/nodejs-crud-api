@@ -25,7 +25,8 @@ export const getUserById = (id: string, res: ServerResponse) => {
       res.write(JSON.stringify(data));
     }
   } catch (error) {
-    console.log(error);
+    res.statusCode = ServerCodes.SERVER_ERROR;
+    res.end(error);
   }
 };
 
@@ -38,7 +39,6 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
     const id = uuidv4();
     const userData = JSON.parse(body) as UserData;
     const { username, age, hobbies } = userData;
-    console.log(userData)
     if (!username || !age || !hobbies) {
       res.statusCode = ServerCodes.CLIENT_ERROR;
       res.end('Invalid data');
@@ -55,7 +55,26 @@ export const createNewUser = (req: IncomingMessage, res: ServerResponse) => {
 };
 
 export const updateUser = (req: IncomingMessage, res: ServerResponse, id: string) => {
-  
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk.toString();
+  });
+  req.on('end', () => {
+    const userData = JSON.parse(body) as UserData;
+    const { username, age, hobbies } = userData;
+    if (!username || !age || !hobbies) {
+      res.statusCode = ServerCodes.CLIENT_ERROR;
+      res.end('Invalid data');
+      return;
+    }
+    const updatedUser = {
+      ...userData,
+      id,
+    };
+    db.updateUser(userData, id);
+    res.statusCode = ServerCodes.SUCCESS;
+    res.end(JSON.stringify(updatedUser));
+  });
 };
 
 export const deleteUser = (id: string, res: ServerResponse) => {
@@ -64,6 +83,7 @@ export const deleteUser = (id: string, res: ServerResponse) => {
     res.statusCode = ServerCodes.SUCCESS_DELETE;
     res.end('User successfully deleted');
   } catch (error) {
-    
+    res.statusCode = ServerCodes.SERVER_ERROR;
+    res.end(error);
   }
 }
