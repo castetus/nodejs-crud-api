@@ -30,11 +30,11 @@ export class Router {
     const [ base, endpoint, id ] = url.replace('/', '').split('/');
 
     if (id) {
-      // const isIdValid = checkId(id);
-      // if (!isIdValid) {
-      //   res.statusCode = ServerCodes.CLIENT_ERROR;
-      //   res.end('User id is not valid id');
-      // }
+      const isIdValid = checkId(id);
+      if (!isIdValid) {
+        res.statusCode = ServerCodes.CLIENT_ERROR;
+        res.end('User id is not valid id');
+      }
 
       const userExist = checkUser(id);
       if (!userExist) {
